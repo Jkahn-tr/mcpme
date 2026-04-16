@@ -25,89 +25,52 @@ MCPme is an MCP server that exposes your personal context as machine-readable re
 | `domain-knowledge.md` | What you know that a general-purpose AI doesn't |
 | `decision-log.md` | How you make decisions, with real examples |
 
-Each file has an embedded **interview protocol** — questions you can hand to Claude, ChatGPT, or any AI to help you fill it out conversationally.
-
 ---
 
 ## Getting Started
 
-### Step 1 — Fill out your portfolio
+**You don't build this yourself. Your agent builds it for you.**
 
-Each `.md` file in `/portfolio` contains interview questions in an HTML comment at the top. Use them:
+Forward this repo link to your AI agent (Claude, ChatGPT, Cursor, OpenClaw — whatever you use) with the following instruction:
 
-1. Open a new Claude or ChatGPT conversation
-2. Paste the interview questions from any file
-3. Let the AI interview you and draft the file
-4. Edit until it feels right
-5. Repeat for all 10 files
+---
 
-### Step 2 — Run locally (Claude Desktop)
+> **Prompt to give your agent:**
+>
+> "Read the MCPme repo at https://github.com/Jkahn-tr/mcpme and build my personal context portfolio. Use everything you already know about me from our conversation history, memory files, and any context you have access to. Fill out all 10 portfolio files. Where you're uncertain, make your best inference and flag it so I can correct it. Once the files are drafted, set up the MCP server locally and walk me through deploying it remotely with authentication enabled."
 
-```bash
-git clone https://github.com/Jkahn-tr/mcpme.git
-cd mcpme
-```
+---
 
-Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+Your agent knows you better than you think. It has your conversation history, your preferences, your projects. Let it do the work. You review and correct — that's it.
 
-```json
-{
-  "mcpServers": {
-    "my-context": {
-      "command": "node",
-      "args": ["/path/to/mcpme/server.js"]
-    }
-  }
-}
-```
-
-Restart Claude Desktop. Your context is now available to every Claude conversation.
-
-### Step 3 — Deploy remotely (optional)
-
-For access from any device or agent:
-
-```bash
-# Generate a secure token (required for remote deployment)
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-
-# Run with auth enabled
-MCP_TOKEN=your-token-here PORT=3100 node server.js --sse
-```
-
-**Deploy to Railway:**
-1. Fork this repo
-2. Connect to [Railway](https://railway.com) → New Project → Deploy from GitHub
-3. Set environment variables:
-   - `MCP_TOKEN` = your generated token (required)
-   - `PORT` = Railway sets this automatically
-4. Your MCP server is live at `https://your-app.up.railway.app/mcp`
+**What good agents will do:**
+- Pull from memory files, past conversations, and any stored context
+- Draft all 10 files without asking you to fill out forms
+- Flag gaps or uncertain inferences for your review
+- Set up the server, generate a secure token, and walk you through Railway deployment
+- Keep the portfolio updated over time as your projects and priorities shift
 
 ---
 
 ## Security
 
-**Authentication is required for remote deployment.** This is not optional.
+**Authentication is required for remote deployment. This is not optional.**
 
 The portfolio files contain real context about you — your projects, your team, your priorities. Without auth, anyone with the URL can read them.
 
 - **Local (stdio):** No auth required. Only your machine talks to it.
-- **Remote (HTTP/SSE):** `MCP_TOKEN` env var must be set. Every request requires `Authorization: Bearer <token>`.
-- **The portfolio is context, not credentials.** Do not put passwords, API keys, or tokens in these files. Use a password manager for those.
+- **Remote (HTTP/SSE):** `MCP_TOKEN` env var must be set. Every request requires `Authorization: Bearer <token>`. Your agent will generate this for you.
+- **The portfolio is context, not credentials.** Do not put passwords, API keys, or tokens in these files. Credentials belong in a password manager or secrets vault — not here.
 
-**To connect a remote MCP client:**
-```
-Authorization: Bearer your-token-here
-POST https://your-app.up.railway.app/mcp
-```
+Your agent should enforce this automatically. If it tries to deploy without setting a token, stop it and tell it to add auth first.
 
 ---
 
 ## Design Principles
 
-- **Markdown-first** — every AI on earth can read it, no special format required
+- **Markdown-first** — every AI on earth can read it; no special format required
 - **Modular, not monolithic** — separate files for separate concerns; agents grab what's relevant
-- **Living, not static** — update it as you change; your agents can help maintain it
+- **Living, not static** — update it as you change; your agents maintain it over time
 - **Portable** — works with Claude, ChatGPT, Cursor, OpenClaw, or anything that speaks MCP
 
 ---
@@ -131,6 +94,8 @@ mcpme/
     ├── domain-knowledge.md
     └── decision-log.md
 ```
+
+Each file contains an embedded interview protocol in an HTML comment at the top — for cases where you want to guide your agent through the process file by file.
 
 ---
 
