@@ -1,0 +1,13 @@
+{
+  "name": "justin-context-portfolio",
+  "version": "1.0.0",
+  "description": "Justin Kahn Personal Context Portfolio — MCP Server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:remote": "node server.js --sse",
+    "dev": "PORT=3100 node server.js --sse"
+  },
+  "keywords": ["mcp", "context-portfolio", "personal-context"],
+  "license": "MIT"
+}
